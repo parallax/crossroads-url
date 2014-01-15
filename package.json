@@ -1,0 +1,30 @@
+{
+  "name": "crossroads-url",
+  "version": "0.0.0",
+  "description": "Crossroads-based URL router",
+  "main": "crossroads-url.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/parallax/crossroads-url.git"
+  },
+  "keywords": [
+    "crossroads",
+    "url",
+    "router"
+  ],
+  "author": "Nathaniel Higgins <nathaniel@parall.ax>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/parallax/crossroads-url/issues"
+  },
+  "homepage": "https://github.com/parallax/crossroads-url",
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "crossroads": "~0.12.0",
+    "window-location": "0.0.3",
+    "wolfy87-eventemitter": "~4.2.6"
+  }
+}
