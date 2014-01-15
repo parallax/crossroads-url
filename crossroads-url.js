@@ -208,14 +208,16 @@
 
             callbacks = toArray(callbacks);
 
-            _.each(callbacks, function(callback) {
-                cr.bypassed.add(function fallbackClosure(url) {
-                    var val = callback.apply(this, arguments);
+            cr.bypassed.add(function fallbackClosure(url) {
 
-                    messages.emit('bypassed', url, val);
+                var _this = this;
+                var _args = arguments;
 
-                    return val;
+                var vals = _.map(callbacks, function(callback) {
+                    return callback.apply(_this, _args);
                 });
+
+                messages.emit('bypassed', url, vals);
             });
 
             return this;
@@ -335,8 +337,8 @@
 
                     promise.then(function(res) {
                         deferred.resolve({
-                            url : url,
-                            res : res
+                            url     : url,
+                            result  : res
                         });
                     });
                 });
