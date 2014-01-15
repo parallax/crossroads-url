@@ -48,6 +48,9 @@
 
         // Communicate outwards somehow
         this.messages = new EventEmitter();
+
+        // Store the baseControllerUrl
+        this.baseControllerUrl = 'controllers/';
     }
 
     _.extend(Router.prototype, {
@@ -235,6 +238,8 @@
             // Store a safe reference to the router
             var router = this;
 
+            var base = this.baseControllerUrl;
+
             return function controllerHandlerClosure() {
                 // Store our arguments and convert them to an array
                 // so that we can play with them
@@ -246,7 +251,7 @@
 
                 // Lets grab the controller from requirejs
                 router.window.require(
-                    ['controllers/' + config.controller],
+                    [base + config.controller],
                     function(controller) {
                         // Grab some variables from the router
                         var oldFrag       = router.currentFragment;
