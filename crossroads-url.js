@@ -261,9 +261,6 @@
                         var oldController = router.currentController;
                         var newFrag       = router.getFragment();
 
-                        // Add the oldFrag and newFrag to start of the array
-                        args = [oldFrag, newFrag].concat(args);
-
                         // If we have an old controller, try to unload it
                         if (oldController && oldController.unload) {
                             oldController.unload.apply(oldController, args);

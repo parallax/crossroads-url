@@ -322,45 +322,6 @@ describe('Router', function() {
 			}).done();
 		});
 
-		it('should pass the old fragment and new frag along', function(done) {
-			var val = 0;
-			var frag;
-			var cFrag;
-
-			var router = getRouterWithRequire({
-				Foo: {
-					init: function(oldFrag, currentFrag) {
-						cFrag = currentFrag;
-						val   = val + 1;
-					},
-
-					second: function(oldFrag) {
-						frag = oldFrag;
-					}
-				}
-			});
-
-			var fn = router.controllerHandler({
-				controller : 'Foo',
-				action     : 'init'
-			});
-
-			var fn2 = router.controllerHandler({
-				controller : 'Foo',
-				action     : 'second'
-			})
-
-			fn().then(function() {
-				assert.equal(1, val);
-
-				return fn2();
-			}).then(function() {
-				assert.equal('/things/0/stuff/0', frag);
-				assert.equal('/things/0/stuff/0', cFrag);
-				done();
-			}).done();
-		});
-
 		it('should unload old controllers', function(done) {
 			var val = 0;
 
@@ -651,7 +612,7 @@ describe('Router', function() {
 
 			getRouterWithRequire({
 				Foo: {
-					init: function(old, n, id) {
+					init: function(id) {
 						val = id;
 					}
 				}
