@@ -527,19 +527,16 @@ describe('Router', function() {
 			});
 			
 			router.controller(['/a', '/b'], 'Foo');			
-			router.messages.once('controller', function() {
+
+			router.run('/a').then(function() {
 				assert.equal(1, val);
 
-				router.messages.once('controller', function() {
-					assert.equal(2, val);
+				return router.run('/b');
+			}).then(function() {
+				assert.equal(2, val);
 
-					done();
-				});
-
-				router.run('/b');
-			});
-
-			router.run('/a');
+				done();
+			}).done();
 		});
 	});
 	
@@ -556,14 +553,13 @@ describe('Router', function() {
 				}
 			});
 			
-			router.fallbackController('Foo');			
-			router.messages.once('controller', function() {
+			router.fallbackController('Foo');
+
+			router.run('/a').then(function() {
 				assert.equal(1, val);
 
 				done();
-			});
-
-			router.run('/a');
+			}).done();
 		});
 
 		it(
@@ -582,13 +578,11 @@ describe('Router', function() {
 				
 				router.controller('/a', 'Foo');			
 				router.fallbackController('Foo');
-				router.messages.once('controller', function() {
+
+				router.run('/b').then(function() {
 					assert.equal(1, val);
-
 					done();
-				});
-
-				router.run('/b');
+				}).done();
 			}
 		);
 	});

@@ -48,10 +48,6 @@
 
         // Communicate outwards somehow
         this.messages = new EventEmitter();
-
-        // Add a default fallback so that a route is always triggered
-        // when Router#run is called
-        this.fallback(function() {});
     }
 
     _.extend(Router.prototype, {
@@ -105,6 +101,7 @@
          * @return {String}
          */
         getFragment: function() {
+
             // Throw an error if we haven't mocked the window object
             if (!this.window) {
                 throw new Error('Need to mock window for node');
@@ -128,7 +125,7 @@
          * @return {Function}           The function that will call them
          */
         callFunctions: function(callbacks) {
-            return function handleRouteClosure() {
+            return function callFunctionsClosure() {
                 var _args = arguments;
                 var _this = this;
                 var res = [];
@@ -202,14 +199,23 @@
          *                                    to be called when no routes are
          *                                    matched
          * @return {Router}                   this for chaining
+         *
+         * @todo Move fallbackClosure to a separate function
          */
         fallback: function(callbacks) {
-            var cr = this.getCrossroads();
+            var cr          = this.getCrossroads();
+            var messages    = this.messages;
 
             callbacks = toArray(callbacks);
 
             _.each(callbacks, function(callback) {
-                cr.bypassed.add(callback);
+                cr.bypassed.add(function fallbackClosure(url) {
+                    var val = callback.apply(this, arguments);
+
+                    messages.emit('bypassed', url, val);
+
+                    return val;
+                });
             });
 
             return this;
@@ -319,12 +325,19 @@
             var promises = _.map(urls, function(url) {
                 var deferred = Q.defer();
 
+                messages.defineEvents(['bypassed', 'route']);
+
                 // This won't always be the event for the current URL so
                 // we'll use the one we're passed
-                messages.once('route', function(url, res) {
-                    deferred.resolve({
-                        url : url,
-                        res : res
+                messages.once(/(bypassed)|(route)/, function(url, res) {
+
+                    var promise = _.isArray(res) ? Q.all(res) : Q(res);
+
+                    promise.then(function(res) {
+                        deferred.resolve({
+                            url : url,
+                            res : res
+                        });
                     });
                 });
 
