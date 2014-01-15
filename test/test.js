@@ -316,12 +316,10 @@ describe('Router', function() {
 				action     : 'init'
 			});
 
-			fn();
-
-			router.messages.once('controller', function() {
+			fn().then(function() {
 				assert.equal(1, val);
 				done();
-			});
+			}).done();
 		});
 
 		it('should pass the old fragment and new frag along', function(done) {
@@ -352,22 +350,15 @@ describe('Router', function() {
 				action     : 'second'
 			})
 
-			router.messages.once('controller', function() {
-
+			fn().then(function() {
 				assert.equal(1, val);
 
-				router.messages.once('controller', function() {
-					assert.equal('/things/0/stuff/0', frag);
-					assert.equal('/things/0/stuff/0', cFrag);
-					done();
-				});
-
-
-				fn2();
-			});
-
-
-			fn();
+				return fn2();
+			}).then(function() {
+				assert.equal('/things/0/stuff/0', frag);
+				assert.equal('/things/0/stuff/0', cFrag);
+				done();
+			}).done();
 		});
 
 		it('should unload old controllers', function(done) {
@@ -397,22 +388,17 @@ describe('Router', function() {
 			var fn2 = router.controllerHandler({
 				controller : 'Foo',
 				action     : 'second'
-			})
-
-			router.messages.once('controller', function() {
-
-				assert.equal(1, val);
-
-				router.messages.once('controller', function() {
-					assert.equal(0, val);
-					done();
-				});
-
-
-				fn2();
 			});
 
-			fn();
+
+			fn().then(function() {
+				assert.equal(1, val);
+
+				return fn2();
+			}).then(function() {
+				assert.equal(0, val);
+				done();
+			}).done();
 		});
 	});
 
@@ -429,14 +415,13 @@ describe('Router', function() {
 				}
 			});
 			
-			router.controller('/a', 'Foo');			
-			router.messages.once('controller', function() {
+			router.controller('/a', 'Foo');
+
+			router.run('/a').then(function() {
 				assert.equal(1, val);
 
 				done();
-			});
-
-			router.run('/a');
+			}).done();
 		});
 
 		it(
@@ -454,13 +439,12 @@ describe('Router', function() {
 				});
 				
 				router.controller('/a', 'Foo', 'bar');			
-				router.messages.once('controller', function() {
+
+				router.run('/a').then(function() {
 					assert.equal(1, val);
 
 					done();
-				});
-
-				router.run('/a');
+				}).done();
 			}
 		);
 
@@ -478,14 +462,13 @@ describe('Router', function() {
 					}
 				});
 				
-				router.controller('/a', { controller: 'Foo' });			
-				router.messages.once('controller', function() {
+				router.controller('/a', { controller: 'Foo' });
+
+				router.run('/a').then(function() {
 					assert.equal(1, val);
 
 					done();
-				});
-
-				router.run('/a');
+				}).done();
 			}
 		);
 
@@ -504,13 +487,12 @@ describe('Router', function() {
 				});
 				
 				router.controller('/a', { controller: 'Foo', action: 'bar' });			
-				router.messages.once('controller', function() {
+
+				router.run('/a').then(function() {
 					assert.equal(1, val);
 
 					done();
-				});
-
-				router.run('/a');
+				}).done();
 			}
 		);
 
