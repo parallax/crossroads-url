@@ -6,17 +6,12 @@ Crossroads-based URL router
 ## Not Yet Documented
 
  1. Unload
- 2. Complex URLs
 
 ## Installation
 
 This is currently private, but when it's registered you should be able to do this.
 
     bower install croassroads-url
-
-For now, you must do this
-
-    bower install git@github.com:parallax/crossroads-url.git
 
 ## Dependencies
 
@@ -30,31 +25,19 @@ Bower should handle dependencies for you, but if you wish to use this outside of
 ## Usage
 
 ```js
+
+define('controllers/product', {
+	edit: function(id) {
+        // ...
+    }
+});
+
 require(['crossroads-url'], function(Router) {
 
 	var router = new Router(base); // The base URL, can just be an empty string
 
-	router.controller('/url', 'Controller Name', 'Controller Action');
-
-	// or
-
-	route.controller('/url', {
-		controller : 'Controller Name',
-		action     : 'Controller Action'
-	});
-
-	// or
-
-	router.controller(['/url1', '/url2'], {
-		controller : 'Controller Name',
-		action     : 'Controller Action'
-	});
-
-	// You can also specify a fallback controller
-
-	router.fallbackController('/url', 'Controller Name', 'Controller Action');
-
+	router.controller('/products/{id}/edit', 'product');
 });
 ```
 
-Under the hood, this will require a module with the name "controllers/CONTROLLER NAME".
+Under the hood, this will require a module with the name `controllers/CONTROLLER NAME`.
