@@ -11,7 +11,7 @@ Crossroads-based URL router
 
 This is currently private, but when it's registered you should be able to do this.
 
-    bower install croassroads-url
+    bower install crossroads-url --save
 
 ## Dependencies
 
