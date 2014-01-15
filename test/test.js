@@ -2,6 +2,7 @@ var assert     = require('assert');
 var Router     = require('../crossroads-url');
 var crossroads = require('crossroads');
 var Window     = require('window-location');
+var _          = require('lodash');
 
 var testUrl =
 	'http://localhost:8080/things/0/stuff/0?whatsits=1#majiggers';
@@ -361,6 +362,29 @@ describe('Router', function() {
 				done();
 			}).done();
 		});
+
+		it('should work with controller wide code', function(done) {
+
+			var val = 0;
+
+			function Foo() {
+				val += 1;
+			}
+
+			_.extend(Foo.prototype, {
+				init: function() {
+					val += 2;
+				}
+			});
+
+			var router = getRouterWithRequire({
+				Foo: Foo
+			}).controller('/a', 'Foo').run('/a').then(function() {
+				assert.equal(3, val);
+
+				done();
+			}).done();
+		})
 	});
 
 	describe('#controller()', function() {

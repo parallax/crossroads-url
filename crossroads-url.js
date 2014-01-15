@@ -266,6 +266,10 @@
                             oldController.unload.apply(oldController, args);
                         }
 
+                        if (typeof controller === 'function') {
+                            controller = new controller(args);
+                        }
+
                         // Grab the method from the controller
                         var method = controller[config.action];
 
