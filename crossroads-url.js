@@ -23,8 +23,9 @@
      *
      * @param {string}     base The base url. Defaults to ''
      * @param {Crossroads} cr   Pass in a custom crossroads instance
+     * @param {Object} config Extra configuration
      */
-    function Router(base, cr) {
+    function Router(base, cr, config) {
         // Bind all methods so we don't need to worry
         // about context.
         _.bindAll.apply(_, [this].concat(_.functions(this)));
@@ -51,6 +52,8 @@
 
         // Store the baseControllerUrl
         this.baseControllerUrl = 'controllers/';
+
+        _.extend(this, config || {});
     }
 
     _.extend(Router.prototype, {
