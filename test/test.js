@@ -568,4 +568,81 @@ describe('Router', function() {
 			}
 		);
 	});
+
+	describe('#run()', function() {
+		it('should return the value that the handler returns', function(done) {
+			getRouter()
+				.on('/a', function() {
+					return 'abc';
+				})
+			.run('/a').then(function(res) {
+				assert.deepEqual([{
+					url    : '/a',
+					result : ['abc']
+				}], res);
+
+				done();
+			}).done();
+		});
+
+		it('should return the value that the fallback returns', function(done) {
+			getRouter()
+				.fallback(function() {
+					return 'abc';
+				})
+			.run('/a').then(function(res) {
+				assert.deepEqual([{
+					url    : '/a',
+					result : ['abc']
+				}], res);
+
+				done();
+			}).done();
+		});
+
+		it(
+			'should return the value that the controller returns',
+			function(done) {
+				getRouterWithRequire({
+					Foo: {
+						init: function() {
+							return 'abc';
+						}
+					}
+				})
+					.controller('/a', 'Foo')
+				.run('/a').then(function(res) {
+					assert.deepEqual([{
+						url    : '/a',
+						result : ['abc']
+					}], res);
+
+					done();
+				}).done();
+			}
+		);
+
+		
+		it(
+			'should return the value that the fallback controller returns',
+			function(done) {
+				getRouterWithRequire({
+					Foo: {
+						init: function() {
+							return 'abc';
+						}
+					}
+				})
+					.fallbackController('Foo')
+				.run('/a').then(function(res) {
+					assert.deepEqual([{
+						url    : '/a',
+						result : ['abc']
+					}], res);
+
+					done();
+				}).done();
+			}
+		);	
+	});
 });
