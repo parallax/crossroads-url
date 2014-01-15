@@ -183,7 +183,7 @@ describe('Router', function() {
 				.on(['/a', '/b'], function() {
 					val += 1;
 				})
-			.run('/a').run('/b');
+			.run(['/a', '/b']);
 
 			assert.equal(val, 2);
 		});
@@ -209,7 +209,7 @@ describe('Router', function() {
 					function() { val += 2; },
 					function() { val += 1; }
 				])
-			.run('/a').run('/b');
+			.run(['/a', '/b'])
 
 			assert.equal(val, 6);
 		});

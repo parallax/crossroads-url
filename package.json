@@ -25,6 +25,7 @@
     "lodash": "~2.4.1",
     "crossroads": "~0.12.0",
     "window-location": "0.0.3",
-    "wolfy87-eventemitter": "~4.2.6"
+    "wolfy87-eventemitter": "~4.2.6",
+    "q": "~1.0.0"
   }
 }

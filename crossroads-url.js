@@ -1,17 +1,22 @@
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['lodash', 'crossroads', 'eventEmitter'], factory);
+        define(['lodash', 'crossroads', 'eventEmitter', 'q'], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory(
             require('lodash'),
             require('crossroads'),
-            require('wolfy87-eventemitter')
+            require('wolfy87-eventemitter'),
+            require('q')
         );
 
     } else {
-        root.Router = factory(root._, root.crossroads, root.EventEmitter);
+        root.Router = factory(
+            root._,
+            root.crossroads,
+            root.EventEmitter
+        );
     }
-}(this, function(_, crossroads, EventEmitter) {
+}(this, function(_, crossroads, EventEmitter, Q) {
 
     /**
      * Crossroads-based URL router
@@ -43,6 +48,10 @@
 
         // Communicate outwards somehow
         this.messages = new EventEmitter();
+
+        // Add a default fallback so that a route is always triggered
+        // when Router#run is called
+        this.fallback(function() {});
     }
 
     _.extend(Router.prototype, {
@@ -122,10 +131,13 @@
             return function handleRouteClosure() {
                 var _args = arguments;
                 var _this = this;
+                var res = [];
 
                 _.each(callbacks, function(callback) {
-                    callback.apply(_this, _args);
+                    res.push(callback.apply(_this, _args));
                 });
+
+                return res;
             }
         },
 
@@ -144,7 +156,7 @@
             return function handleRouteClosure() {
                 var val = callback.apply(this, arguments);
 
-                messages.emit('route', url);
+                messages.emit('route', url, val);
 
                 return val;
             };
@@ -220,6 +232,10 @@
                 // so that we can play with them
                 var args = _.toArray(arguments);
 
+                // Create a promise to represent the return value of the
+                // controller
+                var deferred = Q.defer();
+
                 // Lets grab the controller from requirejs
                 router.window.require(
                     ['controllers/' + config.controller],
@@ -255,9 +271,11 @@
                         router.currentController = controller;
                         router.currentFragment   = newFrag;
 
-                        return val;
+                        deferred.resolve(val);
                     }
                 );
+                
+                return deferred.promise;
             }
         },
 
@@ -288,16 +306,34 @@
         },
 
         /**
-         * Run the routes against a URL
-         * @param  {String} url URL to match again, default to
-         *                      Router#getFragment
+         * Run the routes against a set of urls URL
+         * @param  {string|array} urls URL to match again, default to
+         *                             Router#getFragment
          */
-        run: function(url) {
-            url = url || this.getFragment();
+        run: function(urls) {
+            urls = toArray(urls || this.getFragment());
 
-            this.getCrossroads().parse(url);
+            var messages = this.messages;
+            var cr       = this.getCrossroads();
 
-            return this;
+            var promises = _.map(urls, function(url) {
+                var deferred = Q.defer();
+
+                // This won't always be the event for the current URL so
+                // we'll use the one we're passed
+                messages.once('route', function(url, res) {
+                    deferred.resolve({
+                        url : url,
+                        res : res
+                    });
+                });
+
+                cr.parse(url);
+
+                return deferred.promise;
+            });
+
+            return Q.all(promises);
         }
     });
 
