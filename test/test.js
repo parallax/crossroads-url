@@ -643,6 +643,23 @@ describe('Router', function() {
 					done();
 				}).done();
 			}
-		);	
+		);
+
+		it('should pass arguments to controller', function(done) {
+
+			var val;
+
+			getRouterWithRequire({
+				Foo: {
+					init: function(old, n, id) {
+						val = id;
+					}
+				}
+			}).controller('/a/{id}', 'Foo').run('/a/1').then(function() {
+				assert.equal(1, val);
+
+				done();
+			})
+		});
 	});
 });
