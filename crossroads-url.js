@@ -333,14 +333,14 @@
             var messages = this.messages;
             var cr       = this.getCrossroads();
 
+            messages.defineEvents(['bypassed', 'route']);
+
             var promises = _.map(urls, function(url) {
                 var deferred = Q.defer();
 
-                messages.defineEvents(['bypassed', 'route']);
-
                 // This won't always be the event for the current URL so
                 // we'll use the one we're passed
-                messages.once(/(bypassed)|(route)/, function(url, res) {
+                messages.once(/(?:bypassed)|(?:route)/, function(url, res) {
 
                     var promise = _.isArray(res) ? Q.all(res) : Q(res);
 
