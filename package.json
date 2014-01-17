@@ -1,6 +1,6 @@
 {
   "name": "crossroads-url",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Crossroads-based URL router",
   "main": "crossroads-url.js",
   "scripts": {
