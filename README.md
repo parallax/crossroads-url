@@ -74,7 +74,7 @@ This router is designed to work with both tranditional sites (rendered on the se
 
 For a more traditional site, you don't need to worry about cleaning up after yourself. However, with SPA sites, you have to worry about detaching events and whatnot. This router provides a method to do this. Unfortunately, this is only supported within the controller usage, not the `on` and `fallback` methods. 
 
-If you define a controller and it has an `unload` method, it'll be triggered when you move away from the route.
+If you define a controller and it has an `unload` method, it'll be triggered when you move away from the route and then trigger the `Router#run` method again. This router does not watch the URL itself, like some other routers (like Backbones). You have to manually trigger `Router#run` every time you want it to check the URL and run the route. 
 
 ### Example
 
