@@ -36,7 +36,7 @@ require(['crossroads-url'], function(Router) {
 
 	var router = new Router(base); // The base URL, can just be an empty string
 
-	router.controller('/products/{id}/edit', 'product');
+	router.controller('/products/{id}/edit', 'product', 'edit');
 });
 ```
 
